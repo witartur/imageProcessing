@@ -1,3 +1,6 @@
+# user ignore
+*.code-workspace
+
 # Prerequisites
 *.d
 

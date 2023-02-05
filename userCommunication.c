@@ -19,7 +19,7 @@ int loadInt(int *number)
 
 void protectionInt(int number)
 {
-    while (loadInt(number) != 1)
+    while (loadInt(&number) != 1)
     {
         printf("Incorrect input number. Number must be integer\r\n");
     }

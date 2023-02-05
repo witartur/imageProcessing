@@ -4,7 +4,7 @@
 typedef struct
 {
     char name[50];
-    char standard[2];
+    char standard[3];
     int height;
     int width;
     int maxWidth;

@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
+
 
 #include "userCommunication.c"
 #include "fileManager.c"
@@ -15,10 +17,9 @@ int main()
     int firstUserChoice = 0;
     int imageChoice = 0;
     int modChoice = 0;
-    int modChoice = 0;
     int imageAmount = 0;
 
-    allImages = (imageFile*)malloc(1*sizeof(imageFile));
+    allImages = malloc(1*sizeof(imageFile));
 
 
     do
@@ -36,12 +37,9 @@ int main()
         case 1:
             printf("\r\nPicked load image");
             sleep(0.5); 
-            loadImage();
-            if (loadImage == 1)
-            {
-                imageAmount ++;
-            }
-            
+            // system("cls");
+            fputs("\x1b[H\x1b[2J\x1b[3J", stdout); fflush(stdout); // alt for clearing terminal in VSC
+            loadImage(allImages, &selectImage, &imageAmount);
             break;
         
         case 2:
@@ -51,7 +49,7 @@ int main()
         
         case 3:
             printf("\r\nPicked select image for modification");
-            sleep(0.5); 
+            sleep(1); 
             // system("cls");
             fputs("\x1b[H\x1b[2J\x1b[3J", stdout); fflush(stdout); // alt for clearing terminal in VSC
             printf("*****     IMAGE MODIFICATOR    *****\r\n\n");
@@ -65,7 +63,7 @@ int main()
         
         case 4:
             printf("\r\nPicked mofify selected image");
-            sleep(0.5);
+            sleep(1);
             
             if (imageAmount == 0)
             {

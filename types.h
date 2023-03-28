@@ -7,8 +7,8 @@ typedef struct
     char standard[3];
     int height;
     int width;
-    int maxWidth;
-    int **array;        //2D array
+    int colorDepth;
+    int **array;
 } imageFile;
 
 

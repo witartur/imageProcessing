@@ -1,10 +1,12 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
 #include "fileManager.h"
 
-#include <string.h>
-
-static char getImageStandard(FILE *file)
+char getImageStandard(FILE *file)
 {
-    char standard[2] = {};
+    char standard[3] = {0};
     fscanf(file, "%s\n", standard);
 
     if (standard[1] == '2' || standard[1] == '5')
@@ -18,12 +20,12 @@ static char getImageStandard(FILE *file)
     }
 }
 
-static void getImageDimensions(FILE* file, int *width, int *height, int *maxWidth)
+static void getImageDimensions(FILE* file, int *width, int *height, int *colorDepth)
 {
     int i;
     int w;
     int h;
-    int m;
+    int c;
 
     do {
         i = fscanf(file, "%d ", &w);
@@ -42,7 +44,7 @@ static void getImageDimensions(FILE* file, int *width, int *height, int *maxWidt
     } while (i != 1);
 
     do {
-        i = fscanf(file, "%d\n", &maxWidth);
+        i = fscanf(file, "%d\n", &c);
         if (i == 0)
         {
             fseek(file, 1, SEEK_CUR);
@@ -51,7 +53,7 @@ static void getImageDimensions(FILE* file, int *width, int *height, int *maxWidt
     
     *width = w;
     *height = h;
-    *maxWidth = m;
+    *colorDepth = c;
 
 }
 
@@ -67,7 +69,7 @@ void loadImage(imageFile *allImages, imageFile *selectImage, int *imageAmount )
         strcat(path, fileName);
         strcat(path, ".pgm");
 
-        strncpy(selectImage->name, fileName, 50);
+        strncpy(allImages->name, fileName, 50);
 
         file = fopen(path, "r");
 
@@ -78,30 +80,24 @@ void loadImage(imageFile *allImages, imageFile *selectImage, int *imageAmount )
             continue;
         }
 
-        char stand[3] = {""};
-        // stand[0] = 'P';          // co tu sie odjebuje?
-        stand[1] = getImageStandard(file);
+        char stand[3] = {0};
         stand[0] = 'P';
+        stand[1] = getImageStandard(file);
         stand[2] = '\0';
-
-
-        printf("%d", sizeof(stand)/sizeof(char));
-        printf("%d", sizeof(selectImage->standard)/sizeof(char));
-        printf("The string is: %s", stand);
 
         if (stand[1] != '0')
         {
-            strncpy(selectImage->standard, stand, 2);
+            strncpy(allImages->standard, stand, 2);
         }
 
         int width = 0;
         int height = 0;
-        int maxWidth= 0;
-        getImageDimensions(file, &width, &height, &maxWidth);
+        int colorDepth= 0;
+        getImageDimensions(file, &width, &height, &colorDepth);
 
-        selectImage->height = height;
-        selectImage->width = width;
-        selectImage->maxWidth = maxWidth;
+        allImages->height = height;
+        allImages->width = width;
+        allImages->colorDepth = colorDepth;
 
         int **array;
         allocate2D(&array, height, width);
@@ -110,19 +106,19 @@ void loadImage(imageFile *allImages, imageFile *selectImage, int *imageAmount )
         {
             for (int j = 0; j < width; j++)
             {
-                while (fscanf(file, "%d", &array[i][j]))
+                while (fscanf(file, "%d\n", &array[i][j]) == 0)
                 {
                     fseek(file, 1, SEEK_CUR);
                 }
             }
         }
 
-        allocate2D(&selectImage->array, height, width);
+        allocate2D(&allImages->array, height, width);
         for (int i = 0; i < height; i++)
         {
             for (int j = 0; j < width; j++)
             {
-                selectImage->array[i][j] = array[i][j];
+                allImages->array[i][j] = array[i][j];
             }
         }
 
@@ -131,6 +127,7 @@ void loadImage(imageFile *allImages, imageFile *selectImage, int *imageAmount )
 
     } while(file == NULL);
 
+    *selectImage = *allImages;
     *imageAmount ++;
     fclose(file);
     
@@ -149,15 +146,15 @@ void allocate2D(int ***array, int height, int width)
 
     for (int i = 0; i < height; i++)
     {
-        *(array+i) = malloc(width * sizeof(int));
+        (*array)[i] = malloc(width * sizeof(int));
 
-        if (*(array+i) == NULL)
+        if ((*array)[i] == NULL)
         {
             printf("Allocation error");
             
             for (int j = 0; i < height; j++)        //realeasing allocated memory in case of error
             {
-                free(*(array+i));
+                free((*array)[i]);
             }
 
             return;
@@ -169,7 +166,7 @@ void release2D(int ***array, int height, int width)
 {
     for (int i = 0; i < height; i++)
     {
-        free(*(array+i));
+        free((*array)[i]);
     }
     free(*array);
 }

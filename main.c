@@ -5,9 +5,9 @@
 #include <unistd.h>
 
 
-#include "userCommunication.c"
-#include "fileManager.c"
-#include "imageMod.c"
+#include "userCommunication.h"
+#include "fileManager.h"
+#include "imageMod.h"
 #include "types.h"
 
 int main()
@@ -22,61 +22,32 @@ int main()
     allImages = malloc(1*sizeof(imageFile));
 
 
-    do
+    while (1)
     {
-        // system("cls");
-        fputs("\x1b[H\x1b[2J\x1b[3J", stdout); fflush(stdout); // alt for clearing terminal in VSC
-        printf("*****     IMAGE MODIFICATOR    *****\r\n\n");
-        printf("Choose an option:\r\n1)   Load new image\r\n2)   Save image\n3)   Select image for modification\n4)   Mofify selected image\n");
-        printf("   I choose:  ");
-        printImageList(imageAmount, imageChoice);
+        firstUserChoice = 0;
+        PrintMenu(firstUserChoice, imageAmount, imageChoice);
         scanf("%d", &firstUserChoice);
 
         switch (firstUserChoice)
         {
         case 1:
-            printf("\r\nPicked load image");
-            sleep(0.5); 
-            // system("cls");
-            fputs("\x1b[H\x1b[2J\x1b[3J", stdout); fflush(stdout); // alt for clearing terminal in VSC
+            PrintMenu(firstUserChoice, imageAmount, imageChoice);
             loadImage(allImages, &selectImage, &imageAmount);
             break;
         
         case 2:
-            printf("\r\nPicked save image");
-            sleep(0.5); 
+            PrintMenu(firstUserChoice, imageAmount, imageChoice);
             break;
         
         case 3:
-            printf("\r\nPicked select image for modification");
-            sleep(1); 
-            // system("cls");
-            fputs("\x1b[H\x1b[2J\x1b[3J", stdout); fflush(stdout); // alt for clearing terminal in VSC
-            printf("*****     IMAGE MODIFICATOR    *****\r\n\n");
-            printf("Choose image for modification:\r\n");
-            printImageList(imageAmount, imageChoice);
-            printf("   I choose:  ");
+            PrintMenu(firstUserChoice, imageAmount, imageChoice);
             scanf("%d", &imageChoice);
             //imageActivation();
 
             break;
         
         case 4:
-            printf("\r\nPicked mofify selected image");
-            sleep(1);
-            
-            if (imageAmount == 0)
-            {
-                printf("No loaded image. Load image first\r\n");
-                sleep(1);
-                break;
-            }
-
-             // system("cls");
-            fputs("\x1b[H\x1b[2J\x1b[3J", stdout); fflush(stdout); // alt for clearing terminal in VSC
-            printf("*****     IMAGE MODIFICATOR    *****\r\n\n");
-            printf("Choose modification:\r\n");
-            printf("   I choose:  ");
+            PrintMenu(firstUserChoice, imageAmount, imageChoice);
             scanf("%d", &modChoice);
             
             // do
@@ -92,20 +63,17 @@ int main()
             break;
 
         case 5:
-            printf("\r\nPicked EXIT");
-            sleep(0.5); 
-            break;
-        
+            PrintMenu(firstUserChoice, imageAmount, imageChoice);
+            
+            // free()
+            // free()
+            exit;
         default:
-            printf("\r\nChoose an option by entering the number from menu\r\n");
-            sleep(2);
+            PrintMenu(firstUserChoice, imageAmount, imageChoice);
             break;
         }
 
-    } while (firstUserChoice != 5);
-
-    // free()
-    // free()
+    }
 
     return 0;
 }
